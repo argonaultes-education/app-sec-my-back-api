@@ -10,9 +10,11 @@ public class SecurityTest {
     @Test
     public void testEncryptDefaultPassword() {
         PasswordEncoder encoder = new BCryptPasswordEncoder();
-        String defaultPassword = "fgfdreg2131";
-        String encodedPassword = encoder.encode(defaultPassword);
-        System.out.println(encodedPassword);
-        Assert.isTrue(encoder.matches(defaultPassword, encodedPassword), "wrong password");
+        String[] passwords = {"fkfen20,d1wp", "jelly2310"};
+        for (String password : passwords) {
+            String encodedPassword = encoder.encode(password);
+            System.out.println(String.format("%s : %s", password, encodedPassword));
+            Assert.isTrue(encoder.matches(password, encodedPassword), "wrong password");
+        }
     }
 }

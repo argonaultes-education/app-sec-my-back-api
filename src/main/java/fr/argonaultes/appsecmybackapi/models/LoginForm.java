@@ -32,17 +32,23 @@ public class LoginForm {
     }
 
     public LoginRes isValid() {
-        String url = "jdbc:postgresql://localhost:5432/peopletrackingdb?user=peopletracking&password=peopletracking";
+        String url = "jdbc:postgresql://localhost:5555/peopletrackingdb?user=peopletrackinguser&password=peopletracking";
         LoginRes loginRes = new LoginRes();
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        String decodedPwd = new String(Base64.getDecoder().decode(this.password));
         try {
             Connection conn = DriverManager.getConnection(url);
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(
                     String.format(
-                            "SELECT id FROM std_users WHERE username = '%s' and password = '%s'", this.username, this.password
-                    ));
+                            "SELECT id, password FROM azerty WHERE username = '%s'", this.username));
             while (rs.next()) {
-                loginRes.setUserId(rs.getInt("id"));
+                String passwordInDb = rs.getString("password");
+                loginRes.setUserId(1);
+                if (encoder.matches(decodedPwd, passwordInDb)) {
+                    loginRes.setUserId(rs.getInt("id"));
+                    loginRes.setAdmin(false);
+                }
             }
             rs.close();
             st.close();
@@ -53,7 +59,7 @@ public class LoginForm {
     }
 
     public LoginRes isValidAdmin() {
-        String url = "jdbc:postgresql://localhost:5432/peopletrackingdb?user=peopletracking&password=peopletracking";
+        String url = "jdbc:postgresql://localhost:5555/peopletrackingdb?user=peopletrackinguser&password=peopletracking";
         LoginRes loginRes = new LoginRes();
         PasswordEncoder encoder = new BCryptPasswordEncoder();
         String decodedPwd = new String(Base64.getDecoder().decode(this.password));
@@ -62,7 +68,7 @@ public class LoginForm {
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(
                     String.format(
-                            "SELECT id, username, password FROM admin_users WHERE username = '%s'", this.username));
+                            "SELECT id, username, password FROM qwerty WHERE username = '%s'", this.username));
             while (rs.next()) {
                 String passwordInDb = rs.getString("password");
                 if (encoder.matches(decodedPwd, passwordInDb)) {

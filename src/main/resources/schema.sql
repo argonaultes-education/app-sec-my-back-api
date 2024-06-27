@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS std_users, admin_users, followings, positions, messages, recover_questions;
+DROP TABLE IF EXISTS azerty, qwerty, cat, positions, messages, fish;
 
-CREATE TABLE std_users (
+CREATE TABLE azerty (
     id INT,
     username TEXT,
     email TEXT,
@@ -9,24 +9,24 @@ CREATE TABLE std_users (
     lastname TEXT
 );
 
-CREATE TABLE admin_users (
+CREATE TABLE qwerty (
     id INT,
     username TEXT,
     email TEXT,
     password TEXT,
     firstname TEXT,
     lastname TEXT,
-    x_account TEXT
+    social_account TEXT
 );
 
-CREATE TABLE recover_questions (
+CREATE TABLE fish (
     id INT,
     admin_id INT,
     question TEXT,
     answer TEXT
 );
 
-CREATE TABLE followings (
+CREATE TABLE cat (
     id INT,
     follower_id INT,
     following_id INT

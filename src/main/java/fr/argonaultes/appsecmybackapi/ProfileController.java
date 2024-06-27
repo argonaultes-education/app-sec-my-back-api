@@ -12,6 +12,13 @@ public class ProfileController {
         return Profile.getProfile(profileId);
     }
 
+    @CrossOrigin(origins = "*")
+    @GetMapping(value = "/lastprofile", produces = "application/json")
+    public Profile lastProfile() {
+        return Profile.getLastProfile();
+    }
+
+
     @PostMapping("/email")
     public void updateEmail() {
         //update user email
@@ -23,4 +30,12 @@ public class ProfileController {
         profile.save();
         return Profile.getProfile(profile.getId());
     }
+
+    @CrossOrigin(origins = "*")
+    @PostMapping("/register")
+    public Profile register(@RequestBody Profile profile) {
+        profile.create();
+        return Profile.getProfile(profile.getId());
+    }
+
 }

@@ -67,12 +67,12 @@ public class AdminProfile {
     }
 
     public static String encodedPassword(int profileId) {
-        String url = "jdbc:postgresql://localhost:5432/peopletrackingdb?user=peopletracking&password=peopletracking";
+        String url = "jdbc:postgresql://localhost:5555/peopletrackingdb?user=peopletrackinguser&password=peopletracking";
         String encodedPassword = null;
         try {
             Connection conn = DriverManager.getConnection(url);
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(String.format("SELECT password FROM admin_users WHERE id = %d", profileId));
+            ResultSet rs = st.executeQuery(String.format("SELECT password FROM qwerty WHERE id = %d", profileId));
             while (rs.next()) {
                 encodedPassword = rs.getString("password");
             }
@@ -85,12 +85,12 @@ public class AdminProfile {
     }
 
     public static String getEncodedPasswordByUsername(String username) {
-        String url = "jdbc:postgresql://localhost:5432/peopletrackingdb?user=peopletracking&password=peopletracking";
+        String url = "jdbc:postgresql://localhost:5555/peopletrackingdb?user=peopletrackinguser&password=peopletracking";
         String encodedPassword = null;
         try {
             Connection conn = DriverManager.getConnection(url);
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(String.format("SELECT password FROM admin_users WHERE username = '%s'", username));
+            ResultSet rs = st.executeQuery(String.format("SELECT password FROM qwerty WHERE username = '%s'", username));
             while (rs.next()) {
                 encodedPassword = rs.getString("password");
             }
@@ -102,19 +102,19 @@ public class AdminProfile {
     }
 
     public static AdminProfile getAdminProfile(int profileId) {
-        String url = "jdbc:postgresql://localhost:5432/peopletrackingdb?user=peopletracking&password=peopletracking";
+        String url = "jdbc:postgresql://localhost:5555/peopletrackingdb?user=peopletrackinguser&password=peopletracking";
         AdminProfile profile = new AdminProfile();
         try {
             Connection conn = DriverManager.getConnection(url);
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(String.format("SELECT * FROM admin_users WHERE id = %d", profileId));
+            ResultSet rs = st.executeQuery(String.format("SELECT * FROM qwerty WHERE id = %d", profileId));
             while (rs.next()) {
                 profile.id = rs.getInt("id");
                 profile.username = rs.getString("username");
                 profile.email = rs.getString("email");
                 profile.firstname = rs.getString("firstname");
                 profile.lastname = rs.getString("lastname");
-                profile.xaccount = rs.getString("x_account");
+                profile.xaccount = rs.getString("social_account");
             }
             rs.close();
             st.close();
@@ -127,12 +127,12 @@ public class AdminProfile {
     }
 
     public static List<RecoverQuestion> getRecoverQuestionsByUsername(String username) {
-        String url = "jdbc:postgresql://localhost:5432/peopletrackingdb?user=peopletracking&password=peopletracking";
+        String url = "jdbc:postgresql://localhost:5555/peopletrackingdb?user=peopletrackinguser&password=peopletracking";
         List<RecoverQuestion> recoverQuestionList = new ArrayList<>();
         try {
             Connection conn = DriverManager.getConnection(url);
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(String.format("SELECT recover_questions.id, question FROM admin_users LEFT JOIN recover_questions ON admin_users.id = recover_questions.admin_id WHERE username = '%s'", username));
+            ResultSet rs = st.executeQuery(String.format("SELECT fish.id, question FROM qwerty LEFT JOIN fish ON qwerty.id = fish.admin_id WHERE username = '%s'", username));
             while (rs.next()) {
                 RecoverQuestion recoverQuestion = new RecoverQuestion();
                 recoverQuestion.setQuestion(rs.getString("question"));
@@ -147,13 +147,13 @@ public class AdminProfile {
     }
 
     public static LoginRes resetPaswordWithRecoverQuestion(RecoverResponseForm recoverResponseForm) {
-        String url = "jdbc:postgresql://localhost:5432/peopletrackingdb?user=peopletracking&password=peopletracking";
+        String url = "jdbc:postgresql://localhost:5555/peopletrackingdb?user=peopletrackinguser&password=peopletracking";
         String username = recoverResponseForm.getUsername();
         LoginRes loginRes = new LoginRes();
         try {
             Connection conn = DriverManager.getConnection(url);
             Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(String.format("SELECT id FROM admin_users WHERE username = '%s'", username));
+            ResultSet rs = st.executeQuery(String.format("SELECT id FROM qwerty WHERE username = '%s'", username));
             while (rs.next()) {
                 loginRes.setAdmin(true);
                 loginRes.setUserId(rs.getInt("id"));
@@ -167,7 +167,7 @@ public class AdminProfile {
             for (RecoverResponse recoverResponse : recoverResponseForm.getRecoverResponseList()) {
                 Connection conn = DriverManager.getConnection(url);
                 Statement st = conn.createStatement();
-                ResultSet rs = st.executeQuery(String.format("SELECT count(*) FROM recover_questions WHERE id = %d AND answer = '%s'", recoverResponse.getQuestionId(), recoverResponse.getResponse()));
+                ResultSet rs = st.executeQuery(String.format("SELECT count(*) FROM fish WHERE id = %d AND answer = '%s'", recoverResponse.getQuestionId(), recoverResponse.getResponse()));
                 while (rs.next()) {
                     if (rs.getInt(1) == 0) {
                         loginRes.setAdmin(false);
@@ -185,7 +185,7 @@ public class AdminProfile {
             try {
                 Connection conn = DriverManager.getConnection(url);
                 Statement st = conn.createStatement();
-                st.execute(String.format("UPDATE admin_users SET password = '%s' WHERE username = '%s'", encodedPassword, username));
+                st.execute(String.format("UPDATE qwerty SET password = '%s' WHERE username = '%s'", encodedPassword, username));
                 st.close();
             } catch (SQLException exception) {
             }
