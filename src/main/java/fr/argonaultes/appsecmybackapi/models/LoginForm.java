@@ -34,21 +34,15 @@ public class LoginForm {
     public LoginRes isValid() {
         String url = "jdbc:postgresql://localhost:5555/peopletrackingdb?user=peopletrackinguser&password=peopletracking";
         LoginRes loginRes = new LoginRes();
-        PasswordEncoder encoder = new BCryptPasswordEncoder();
-        String decodedPwd = new String(Base64.getDecoder().decode(this.password));
         try {
             Connection conn = DriverManager.getConnection(url);
             Statement st = conn.createStatement();
             ResultSet rs = st.executeQuery(
                     String.format(
-                            "SELECT id, password FROM azerty WHERE username = '%s'", this.username));
+                            "SELECT id FROM azerty WHERE username = '%s' and password = '%s'", this.username, this.password
+                    ));
             while (rs.next()) {
-                String passwordInDb = rs.getString("password");
-                loginRes.setUserId(1);
-                if (encoder.matches(decodedPwd, passwordInDb)) {
-                    loginRes.setUserId(rs.getInt("id"));
-                    loginRes.setAdmin(false);
-                }
+                loginRes.setUserId(rs.getInt("id"));
             }
             rs.close();
             st.close();

@@ -20,7 +20,7 @@ public class SecurityController {
             return null;
         }
         LoginRes loginResAdmin = loginForm.isValidAdmin();
-        if (loginResAdmin.getUserId() > 0) {
+        if (loginResAdmin.isAdmin()) {
             return loginResAdmin;
         }
         return loginForm.isValid();
